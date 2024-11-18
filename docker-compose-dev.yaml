@@ -1,0 +1,28 @@
+version: '3.7'
+
+networks:
+  backend_shared:
+    name: backend_shared
+    external: true
+
+services:
+  backend:
+    image: fleetoptimiser-backend:latest
+    command: ["uvicorn", "fleetmanager:api.app", "--port", "3001", "--host", "0.0.0.0", "--proxy-headers", "--root-path", "/api", "--workers", "2"]
+    depends_on:
+      - celery
+    env_file: .dev-env
+    ports:
+      - "127.0.0.1:3001:3001"
+    networks:
+      - backend_shared
+    volumes:
+      - ./running_tasks:/fleetmanager/running_tasks/  # mapping to a volume to record running "abortable" simulation
+  celery:
+    image: fleetoptimiser-backend:latest
+    command: ["celery", "-A", "fleetmanager.tasks.celery", "worker", "--pool", "threads"]
+    env_file: .dev-env
+    networks:
+      - backend_shared
+    volumes:
+      - ./running_tasks:/fleetmanager/running_tasks/  # mapping to a volume to record running "abortable" simulation
