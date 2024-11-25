@@ -1,15 +1,19 @@
 # OS2 FleetOptimiser
 
-FleetOptimiser er et system til optimering af køretøjsflåder med formålet om at reducere både omkostning og udledning forbundet med driften af ens flåde.  
+[Danish readme](README_da.md)
 
-Det er muligt at simulere på historisk kørselsdata fra flådestyringssystemer i både en manuel og automatiseret simulering, hvor man hhv. selv kan justere antallet af køretøjer i ens flåde og få automatiseret forslag til en optimal køretøjs-sammensætning.
-Der findes en række moduler til hentning og aggregering af kørselsdata. De integrerer til flådestyringssystemer, henter data, samler GPS-logs til aggregeret rundture og gemmer _aggregeret_ data. 
+FleetOptimiser is a system for optimising the composition of vehicles in a fleet with the purpose to reduce cost and emission of operating the fleet.
 
-Foruden muligheden for at simulere på flåder, findes der en håndfuld dashboards, der giver indsigt i de konkrete flåders kørsel. Her kan man både finde _overbliks-visualiseringer_ og dykke ned på enkelt køretøjsniveau.
+It provides the possibility to simulate on historical data from fleet management systems through manual - and automated simulations.
+In the manual simulation, one can control the number of vehicles in the fleet, whereas the automated simulation will provide an optimal fleet composition. 
+There is a list of modules available to load and aggregate driving data - they all integrate to fleet management systems, load data, collects GPS logs to aggregated roundtrips and saves the aggregated data.
+
+In addition to the possibility to simulate on fleets,one will find a number of dashboard which provides insights into specific fleet activity. 
+One will find both _overview_ type of visualisations as well as _vehicle_ specific visualisations.
 
 ## Documentation
 
-* [FleetOptimiser Dokumentation](https://os2fleetoptimiser.github.io/OS2fleetoptimiser-docs)
+* [FleetOptimiser Documentation](https://os2fleetoptimiser.github.io/OS2fleetoptimiser-docs)
 
 
 * [Authors](AUTHORS.md)  
