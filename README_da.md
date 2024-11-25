@@ -17,4 +17,4 @@ Foruden muligheden for at simulere på flåder, findes der en håndfuld dashboar
 * [Code of Conduct](CODE_OF_CONDUCT.md)  
 * [Contribution guidelines](CONTRIBUTING.md)  
 * [Governance in the project](GOVERNANCE.md)  
-* [OS2compliance security policies](SECURITY.md)  
+* [OS2fleetoptimiser security policies](SECURITY.md)  

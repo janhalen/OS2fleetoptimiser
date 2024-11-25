@@ -21,4 +21,4 @@ One will find both _overview_ type of visualisations as well as _vehicle_ specif
 * [Code of Conduct](CODE_OF_CONDUCT.md)  
 * [Contribution guidelines](CONTRIBUTING.md)  
 * [Governance in the project](GOVERNANCE.md)  
-* [OS2compliance security policies](SECURITY.md)  
+* [OS2fleetoptimiser security policies](SECURITY.md)  
