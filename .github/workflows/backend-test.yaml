@@ -1,0 +1,28 @@
+name: Backend build and test
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - 'v*.*.*'
+    paths:
+      - 'fleetmanager/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - uses: actions/checkout@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: false
