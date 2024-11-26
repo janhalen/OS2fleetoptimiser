@@ -460,9 +460,9 @@ def clean_roundtrips(ctx):
         with Session() as sess:
             sess.query(RoundTripSegments).filter(
                 RoundTripSegments.round_trip_id.in_(remove)
-            ).delete(synchronize_session="fetch")
+            ).delete(synchronize_session=False)
             sess.query(RoundTrips).filter(RoundTrips.id.in_(remove)).delete(
-                synchronize_session="fetch"
+                synchronize_session=False
             )
             sess.commit()
 
