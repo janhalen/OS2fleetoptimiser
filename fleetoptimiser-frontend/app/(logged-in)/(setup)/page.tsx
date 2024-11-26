@@ -44,7 +44,7 @@ import { useQueries } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/da';
 import { Inter } from 'next/font/google';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import { exportDrivingData } from './DrivingDataDownload';
 
@@ -92,8 +92,10 @@ const carSorting = (car1: VehicleWithStatus, car2: VehicleWithStatus): number =>
 };
 
 export default function Home() {
-    const startPeriod = useAppSelector((state) => dayjs(state.simulation.start_date));
-    const endPeriod = useAppSelector((state) => dayjs(state.simulation.end_date).add(1, 'day')); //Added one more day to include the selected day.
+    const startDateString = useAppSelector((state) => state.simulation.start_date);
+    const endDateString = useAppSelector((state) => state.simulation.end_date);
+    const startPeriod = useMemo(() => dayjs(startDateString), [startDateString]);
+    const endPeriod = useMemo(() => dayjs(endDateString).add(1, 'day'), [endDateString]);
     const locationId = useAppSelector((state) => state.simulation.location_id);
     const locationIds = useAppSelector((state) => state.simulation.location_ids);
     const [selectedLocations, setSelectedLocations] = useState<number[]>(useAppSelector((state) => state.simulation.location_ids));
@@ -217,21 +219,20 @@ export default function Home() {
                         </Typography>
 
                         <div className="flex items-center justify-between mb-2">
-                            <DatePicker
-                                value={useAppSelector((state) => dayjs(state.simulation.start_date))}
+                            <DatePicker // todo fix this
+                                value={startPeriod}
                                 onChange={(e) => {
-                                    if (e) {
+                                    if (e && e.isValid()) {
                                         dispatch(setStartDate(e.format('YYYY-MM-DD')));
-                                    }
-                                }}
+                                    }}}
                                 label="Fra"
                                 className="flex-1"
                             />
                             <AiOutlineArrowRight />
                             <DatePicker
-                                value={useAppSelector((state) => dayjs(state.simulation.end_date))}
+                                value={endPeriod}
                                 onChange={(e) => {
-                                    if (e) {
+                                    if (e && e.isValid()) {
                                         dispatch(setEndDate(e.format('YYYY-MM-DD')));
                                     }
                                 }}

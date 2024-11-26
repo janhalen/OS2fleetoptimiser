@@ -57,8 +57,9 @@ export async function fetchVehiclesByLocation<T>(options: vehicleLocationFilters
     }
 
     try {
+        const prefix = AxiosBase.defaults.baseURL
         const response = await fetch(
-            `/api/fleet/simulation-setup/locations-vehicles?start_date=${options.startPeriod.format('YYYY-MM-DD')}&end_date=${options.endPeriod
+            `${prefix}simulation-setup/locations-vehicles?start_date=${options.startPeriod.format('YYYY-MM-DD')}&end_date=${options.endPeriod
                 .add(1, 'day')
                 .format('YYYY-MM-DD')}${locationQueryParam ? `&${locationQueryParam}` : ''}`
         ).then((res) => res.json());
