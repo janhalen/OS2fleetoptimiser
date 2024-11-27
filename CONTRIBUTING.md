@@ -3,10 +3,10 @@
 If you want to contribute to *OS2FleetOptimiser*, we ask you to follow these guidelines.
 
 ## Reporting bugs
-If you have encountered a bug in *OS2FleetOptimiser*, please check if an issue already exists in the list of existing [issues](https://os2web.atlassian.net/), if such an issue does not exist, you can create one [here](https://os2web.atlassian.net/). When writing the bug report, try to add a clear example that shows how to reproduce said bug.
+If you have encountered a bug in *OS2FleetOptimiser*, please check if an issue already exists in the list of existing [issues](https://github.com/OS2fleetoptimiser/OS2fleetoptimiser/issues), if such an issue does not exist, you can create one [here](https://github.com/OS2fleetoptimiser/OS2fleetoptimiser/issues). When writing the bug report, try to add a clear example that shows how to reproduce said bug.
 
 ## Adding new features
-Before making making changes to the code, we advise you to first check the list of existing [issues](https://os2web.atlassian.net/) for OS2FleetOptimiser to see if an issue for the suggested changes already exists. If such an issue does not exist, you can create one [here](https://os2web.atlassian.net/). Creating an issue gives an opportunity for other developers to give tips even before you start coding. If you are in the early idea phase, or if your feature requires larger changes, you can discuss it with the [projects coordination group](https://os2.eu) or by [contacting OS2 directly](https://os2.eu/kontakt) to make sure you are heading in the right direction.
+Before making changes to the code, we advise you to first check the list of existing [issues](https://github.com/OS2fleetoptimiser/OS2fleetoptimiser/issues) for OS2FleetOptimiser to see if an issue for the suggested changes already exists. If such an issue does not exist, you can create one [here](https://github.com/OS2fleetoptimiser/OS2fleetoptimiser/issues). Creating an issue gives an opportunity for other developers to give tips even before you start coding. If you are in the early idea phase, or if your feature requires larger changes, you can discuss it with the [projects coordination group](https://os2.eu) or by [contacting OS2 directly](https://os2.eu/kontakt) to make sure you are heading in the right direction.
 
 ### Code style
 There is no enforced coding style at this time.  
