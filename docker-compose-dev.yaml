@@ -1,0 +1,46 @@
+version: '3.7'
+
+networks:
+  backend_shared:
+    name: backend_shared
+    external: true
+
+services:
+  frontend:
+    image: fleetoptimiser-frontend:latest
+    command: ["npm", "run", "dev"]
+    ports:
+      - "127.0.0.1:3000:3000"
+  backend:
+    image: fleetoptimiser-backend:latest
+    command: ["uvicorn", "fleetmanager:api.app", "--port", "3001", "--host", "0.0.0.0", "--proxy-headers", "--root-path", "/api", "--workers", "2"]
+    depends_on:
+      - celery
+    env_file: .dev-env
+    ports:
+      - "127.0.0.1:3001:3001"
+    networks:
+      - backend_shared
+    volumes:
+      - ./running_tasks:/fleetmanager/running_tasks/  # mapping to a volume to record running "abortable" simulation
+  celery:
+    image: fleetoptimiser-backend:latest
+    depends_on:
+      - rabbitmq
+    command: ["celery", "-A", "fleetmanager.tasks.celery", "worker", "--pool", "threads"]
+    env_file: .dev-env
+    networks:
+      - backend_shared
+    volumes:
+      - ./running_tasks:/fleetmanager/running_tasks/  # mapping to a volume to record running "abortable" simulation
+  redis:
+    image: "redis:latest"
+    networks:
+      - backend_shared
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    environment:
+      - RABBITMQ_DEFAULT_USER=fleet
+      - RABBITMQ_DEFAULT_PASS=fleet
+    networks:
+      - backend_shared

@@ -1,0 +1,46 @@
+version: '3.7'
+
+networks:
+  frontend_backend:
+    name: frontend_backend
+  backend_shared:
+    name: backend_shared
+    external: true
+
+services:
+  frontend:
+    image: fleetoptimiser-frontend:latest
+    ports:
+      - "127.0.0.1:8001:3000"
+    depends_on:
+      - backend
+    networks:
+      - frontend_backend
+    environment:
+      - KEYCLOAK_ID= # id of the keycloak client registration
+      - KEYCLOAK_SECRET= # secret of the keycloak client registration
+      - KEYCLOAK_ISSUER= # the realm authenticator of the keycloak provider
+      - NEXTAUTH_SECRET= # a secret for the frontend to validate authentication
+      - NEXTAUTH_URL= # host of running application
+      - ROLE_CHECK= # the matching role from the authentication, if present user must have this attribute
+      - ROLE_CHECK_READ= # the matching role if user only has read access
+
+  backend:
+    image: fleetoptimiser-backend:latest
+    command: ["uvicorn", "fleetmanager:api.app", "--port", "3001", "--host", "0.0.0.0", "--proxy-headers", "--root-path", "/api", "--workers", "2"]
+    depends_on:
+      - celery
+    env_file: .prod-env
+    networks:
+      - frontend_backend
+      - backend_shared
+    volumes:
+      - ./running_tasks:/fleetmanager/running_tasks/ # mapping to a volume to record running "abortable" simulation
+  celery:
+    image: fleetoptimiser-backend:latest
+    command: ["celery", "-A", "fleetmanager.tasks.celery", "worker", "--pool", "threads"]
+    env_file: .prod-env
+    networks:
+      - backend_shared
+    volumes:
+      - ./running_tasks:/fleetmanager/running_tasks/  # mapping to a volume to record running "abortable" simulation

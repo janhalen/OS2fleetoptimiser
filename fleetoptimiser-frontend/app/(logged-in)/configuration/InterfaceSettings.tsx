@@ -1,0 +1,21 @@
+export type FormattedData = {
+    capacity_decrease?: number | null;
+    co2_pr_km?: number | null;
+    end_leasing?: string | null;
+    fuel?: string | null;
+    id?: number | null;
+    km_aar?: number | null;
+    department?: string | null;
+    leasing_type?: string | null;
+    location?: string | null;
+    make?: string | null;
+    model?: string | null;
+    omkostning_aar?: number | null;
+    plate?: string | null;
+    range?: number | null;
+    sleep?: number | null;
+    start_leasing?: string | null;
+    type?: string | null;
+    wltp_el?: number | null;
+    wltp_fossil?: number | null;
+};

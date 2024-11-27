@@ -1,0 +1,35 @@
+name: Frontend build, test and push
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - 'v*.*.*'
+      - v*.*.*-rc.*
+    paths:
+      - 'fleetoptimiser-frontend/**'
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: fleetoptimiser-frontend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          file: fleetoptimiser-frontend/Dockerfile
+          push: false
+          context: fleetoptimiser-frontend
