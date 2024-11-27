@@ -50,5 +50,7 @@ jobs:
           push: true
           file: fleetoptimiser-frontend/Dockerfile
           context: fleetoptimiser-frontend
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
