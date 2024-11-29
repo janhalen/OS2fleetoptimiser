@@ -49,7 +49,7 @@ from fleetmanager.model.roundtripaggregator import aggregating_score as score
 logger = logging.getLogger(__name__)
 
 forvaltninger = to_list(os.getenv("FORVALTNINGER", '["SUF", "BIF", "BUF", "KFF", "ØKF", "SOF", "TMF"]'))
-
+ignore_machine_group = [int(machine_group) for machine_group in os.getenv("IGNORE_MACHINE_GROUP", "").split(",")]
 
 @click.group()
 @click.option("-db", "--db-name", envvar="DB_NAME", required=True)
@@ -119,6 +119,7 @@ def set_vehicles(ctx, description_fields=None):
         Materiels.systemstatus.in_(["aktiv", "Ok", "OkMedForbehold", "kass"]),
         Materiels.forvaltning.in_(forvaltninger),
         Materiels.registreringsnummer.isnot(None),
+        Materiels.maskingruppe.notin_(ignore_machine_group),
     ):
         if vehicle.placeringsadresse not in known_starts.address.values:
             print(
