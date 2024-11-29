@@ -49,7 +49,7 @@ from fleetmanager.model.roundtripaggregator import aggregating_score as score
 logger = logging.getLogger(__name__)
 
 forvaltninger = to_list(os.getenv("FORVALTNINGER", '["SUF", "BIF", "BUF", "KFF", "ØKF", "SOF", "TMF"]'))
-ignore_machine_group = [int(machine_group) for machine_group in os.getenv("IGNORE_MACHINE_GROUP", "").split(",")]
+ignore_machine_group = [int(machine_group) for machine_group in os.getenv("IGNORE_MACHINE_GROUP", "").split(",") if machine_group.strip()]
 
 @click.group()
 @click.option("-db", "--db-name", envvar="DB_NAME", required=True)
