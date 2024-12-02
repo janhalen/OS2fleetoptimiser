@@ -33,3 +33,5 @@ jobs:
           file: fleetoptimiser-frontend/Dockerfile
           push: false
           context: fleetoptimiser-frontend
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
