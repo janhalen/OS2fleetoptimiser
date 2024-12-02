@@ -20,9 +20,6 @@ jobs:
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          driver: container
-          driver-opts: network=host
 
       - uses: actions/checkout@v4
 
@@ -32,5 +29,3 @@ jobs:
           file: fleetoptimiser-frontend/Dockerfile
           push: false
           context: fleetoptimiser-frontend
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
