@@ -622,6 +622,9 @@ class VehicleFactory:
             out = out + f"{val.__name__}{val.class_info()}\n"
         return out
 
+    def __iter__(self):
+        yield from self.vmapper.items()
+
 
 class FleetInventory:
     """Class for containing a fleet of vehicles.

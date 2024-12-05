@@ -161,6 +161,23 @@ def extract_peak_day(data):
         )
         trip["distance"] = row.distance if trip["distance"] == 0 else trip["distance"]
 
+        total_trip_time = None
+
+        if trip["start_time"].date() != peak_day_date:
+            total_trip_time = (trip["end_time"] - trip["start_time"]).total_seconds()
+            time_overdue = (peak_day_datetime_start - trip["start_time"]).total_seconds()
+            relative_time_spent = time_overdue / total_trip_time
+            trip["start_time"] = peak_day_datetime_start
+            trip["distance"] = trip["distance"] - (relative_time_spent * trip["distance"])
+
+        if trip["end_time"].date() != peak_day_date:
+            if total_trip_time is None:
+                total_trip_time = (trip["end_time"] - trip["start_time"]).total_seconds()
+            time_overdue = (trip["end_time"] - peak_day_datetime_end).total_seconds()
+            relative_time_spent = time_overdue / total_trip_time
+            trip["end_time"] = peak_day_datetime_end
+            trip["distance"] = trip["distance"] - (relative_time_spent * trip["distance"])
+
         peak_day.append(trip)
 
     return pd.DataFrame(peak_day)
