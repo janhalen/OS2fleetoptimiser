@@ -286,8 +286,8 @@ def automatic_simulator(settings: GoalSimulationOptions, task=None, sim_start=No
             return response
 
     for n, x in automatic.run_solutions():
-        step = (1 + n) / (1 + x) * 30 / 100
-        if not update_progress(task, sim_start, step + 0.7, response, task_message="Evaluerer resultater"):
+        step = (1 + n) / (1 + x) * 20 / 100
+        if not update_progress(task, sim_start, step + 0.8, response, task_message="Evaluerer resultater"):
             return response
 
     if len(automatic.reports) == 0:
