@@ -122,6 +122,8 @@ class TripHandler:
             engine=self.engine
         )
 
+        if len(trips.all_trips) == 0:
+            return trips, []
         return trips, extract_peak_day(trips.all_trips)
 
     @staticmethod
@@ -273,9 +275,8 @@ class FleetHandler:
         for vehicle_id in self.current_vehicles:
             vehicle_name = self.get_vehicle_name(opslag.get(str(vehicle_id)))
             if vehicle_name not in count_dict:
-                count_dict[vehicle_name] = 0
-            count_dict[vehicle_name] += 1
-        # print("ORG", count_dict)
+                count_dict[vehicle_name] = {"count": 0, "id": vehicle_id}
+            count_dict[vehicle_name]["count"] += 1
         return count_dict
 
     def __load_pickable_cars(self, fixed_vehicles: list[int], test_vehicles: list[int], current_vehicles: list[int]):
@@ -402,10 +403,10 @@ class FleetHandler:
         for vehicle_type, vehicle_list in vehicle_type_dict.items():
             sorted_vehicle_list = sorted(vehicle_list, key=lambda x: (1 * x[1]['normalized_cost'] + 1 * x[1]['normalized_co2e']))
             selected_vehicles = [selected_vehicle[0] for selected_vehicle in sorted_vehicle_list[:top_vehicles_to_keep[vehicle_type]]]
-            group_fleet = [vehicle for k, vehicle in enumerate(self.fleet) if k in selected_vehicles]
+            group_fleet = [self.fleet[k] for k in selected_vehicles]
             group_vehicles[vehicle_type] = group_fleet
             new_fleet += group_fleet
-            new_attributed_fleet += [vehicle for k, vehicle in enumerate(self.attributed_fleet) if k in selected_vehicles]
+            new_attributed_fleet += [self.attributed_fleet[k] for k in selected_vehicles]
 
         self.fleet = new_fleet
         self.attributed_fleet = new_attributed_fleet
@@ -828,6 +829,15 @@ class DrivingTest:
 
         self.default_fleet = solution
         start_solution = solution
+        if self.settings.get("km_aar", False):
+            max_dist = trips.all_trips.distance.max()
+            modify_key = None
+            for key, val in vehicle_factory:
+                if val.type_id in [4, 3]:
+                    if max_dist * 365 > val.km_aar * 1.15:
+                        modify_key = key
+            if modify_key:
+                vehicle_factory.vmapper[modify_key].km_aar = max_dist * 365
 
         breakpoint_found, count = self.__search(
             start_solution,
@@ -945,10 +955,16 @@ class DrivingTest:
 
         if terminate:
             count = checked[terminate[0]]
+            # set the actual number of days
+            min_date = self.trip_handler.trips.all_trips.start_time.min()
+            max_date = self.trip_handler.trips.all_trips.end_time.max()
+            days = math.ceil(
+                (max_date - datetime.combine(min_date.date(), time(0))).total_seconds() / 3600 / 24
+            )
             while True:
                 new_solution = self.default_fleet
                 new_solution[car_idx] = count
-                fleet = self.build_fleet(new_solution, vehicle_factory)
+                fleet = self.build_fleet(new_solution, vehicle_factory, days=days)
                 drivable = self.__is_drivable(self.trip_handler.trips, fleet)
                 if drivable:
                     break
@@ -997,8 +1013,11 @@ class DrivingTest:
         simulation.run()
         twv = simulation.trips.trips[simulation.trips.trips[f"{self.fleet_name}_type"] == -1]
         allowed_skipped = 0
-        if slack := self.settings.get("slack", 0) > 0:
-            allowed_skipped = round((trips.trips.end_time.max() - trips.trips.start_time.min()).total_seconds() / 3600 / 24 / slack)
+        slack = self.settings.get("slack", 0)
+        if slack > 0:
+            allowed_skipped = round(
+                (trips.trips.end_time.max() - trips.trips.start_time.min()).total_seconds() / 3600 / 24 / slack
+            )
         drivable = False if len(twv) > allowed_skipped else True
         if len(twv[twv.distance > self.settings.get("max_undriven", 20)]) > 0:
             return False
@@ -1114,7 +1133,7 @@ class AutomaticSimulation:
 
     def run_search(self):
         number_of_searches = self.bike_estimate + 1
-        for bike_count in range(0, self.bike_estimate + 1):
+        for bike_count in range(0, min(self.bike_estimate + 1, 10)):
             self.fh.bike_estimate = bike_count
             breakpoint_found, solution_with_bikes = self.dt.estimate_required_vehicles(number_of_bikes=bike_count)
             vehicle_count = sum(solution_with_bikes) - bike_count
@@ -1202,11 +1221,24 @@ class AutomaticSimulation:
             for vehicle_key in vehicles:
                 if vehicle_key not in self.fh.original_count:
                     fleet_counter[vehicle_key]["count_difference"] = fleet_counter[vehicle_key]["count"]
-                    # print("VEHICLE KEY NOT IN", vehicle_key)
                 else:
-                    # print("VEHICLE KEY IN", vehicle_key)
-                    fleet_counter[vehicle_key]["count_difference"] = fleet_counter[vehicle_key]["count"] - self.fh.original_count[vehicle_key]
-
+                    fleet_counter[vehicle_key]["count_difference"] = fleet_counter[vehicle_key]["count"] - self.fh.original_count[vehicle_key]["count"]
+            for original_vehicle_key, original_vehicle_items in self.fh.original_count.items():
+                if original_vehicle_key not in fleet_counter:
+                    original_vehicle_count = original_vehicle_items["count"]
+                    original_vehicle_id = str(original_vehicle_items["id"])
+                    unused_vehicle = [vehicle for vehicle in self.fh.original_fleet if original_vehicle_id in vehicle[-1].split(",")]
+                    if len(unused_vehicle) == 0:
+                        continue
+                    unused_vehicle = unused_vehicle[0]
+                    fleet_counter[original_vehicle_key] = {
+                        "fleet_id": original_vehicle_id,
+                        "count": 0,
+                        "count_difference": -original_vehicle_count,
+                        "class_name": " ".join([str(unused_vehicle.make), str(unused_vehicle.model)]),
+                        "omkostning_aar": unused_vehicle.omkostning_aar,
+                        "stringified_emission": get_emission(unused_vehicle)
+                    }
             report["flåde"] = list(fleet_counter.values())
             report["results"] = prepared_results
             self.reports.append(report)

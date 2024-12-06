@@ -267,7 +267,7 @@ def automatic_simulator(settings: GoalSimulationOptions, task=None, sim_start=No
 
     automatic.prepare_simulation()
 
-    if automatic.th is None or len(automatic.th.trips.trips) == 0:
+    if automatic.th is None or len(automatic.th.trips.all_trips) == 0:
         response["message"] = "No trips found"
         delete_running_file(f"/fleetmanager/running_tasks/{sim_start}.txt")
         return response
@@ -286,8 +286,8 @@ def automatic_simulator(settings: GoalSimulationOptions, task=None, sim_start=No
             return response
 
     for n, x in automatic.run_solutions():
-        step = (1 + n) / (1 + x) * 30 / 100
-        if not update_progress(task, sim_start, step + 0.7, response, task_message="Evaluerer resultater"):
+        step = (1 + n) / (1 + x) * 20 / 100
+        if not update_progress(task, sim_start, step + 0.8, response, task_message="Evaluerer resultater"):
             return response
 
     if len(automatic.reports) == 0:

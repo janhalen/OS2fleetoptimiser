@@ -9,9 +9,6 @@ on:
       - v*.*.*-rc.*
     paths:
       - 'fleetoptimiser-frontend/**'
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: fleetoptimiser-frontend
 
 jobs:
   build:
@@ -19,7 +16,6 @@ jobs:
 
     permissions:
       contents: read
-      packages: write
 
     steps:
       - name: Set up Docker Buildx
