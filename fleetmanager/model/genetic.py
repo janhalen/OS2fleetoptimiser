@@ -1061,7 +1061,7 @@ class DrivingTest:
             "omkostning": omkostning,
             "udledning": udledning,
             "uallokeret": uallokeret,
-            "driving_book": driving_book,
+            "driving_book": driving_book.copy(),
             "consequence_calculator": cq
         }
 
