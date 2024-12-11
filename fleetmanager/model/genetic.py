@@ -833,7 +833,7 @@ class DrivingTest:
             max_dist = trips.all_trips.distance.max()
             modify_key = None
             for key, val in vehicle_factory:
-                if val.type_id in [4, 3]:
+                if val.type_id in [4, 3] and val.km_aar:
                     if max_dist * 365 > val.km_aar * 1.15:
                         modify_key = key
             if modify_key:
