@@ -439,9 +439,10 @@ def simulation_results_to_excel(results, session: Session = None):
     settings = prepare_settings(
         settings=results["simulation_options"].settings.simulation_settings.dict(),
         bike_settings=results["simulation_options"].settings.bike_settings.dict(),
-        shifts=results["simulation_options"]
-        .settings.shift_settings[0]
-        .dict()["shifts"],
+        shifts=(
+            results["simulation_options"].settings.shift_settings[0].dict()["shifts"]
+            if results["simulation_options"].settings.shift_settings else None
+        )
     )
     settings.to_excel(writer, sheet_name="Simuleringsindstillinger", index=False)
     for col_idx, col in enumerate(settings):
