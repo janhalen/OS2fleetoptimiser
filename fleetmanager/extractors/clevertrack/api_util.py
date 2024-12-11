@@ -31,7 +31,7 @@ def get_vehicles(token: str):
     response = requests.get(url, headers=header)
     vehicles = None
     if response.status_code == 200:
-        vehicles = xmltodict.parse(response.content).get("ArrayOfVehicle_item")
+        vehicles = xmltodict.parse(response.content).get("ArrayOfvehicle_item")
         return vehicles.get("vehicle_item")
     return vehicles
 
